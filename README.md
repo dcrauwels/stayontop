@@ -11,9 +11,11 @@ beautifulsoup4 4.13+
 Install selenium and beautifulsoup4:
 `pip3 install selenium beautifulsoup4`
 Install geckodriver:
+
     wget https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-linux64.tar.gz
     tar -xvzf geckodriver-v0.33.0-linux64.tar.gz
     sudo mv geckodriver /usr/local/bin/
+    
 ## Setup
 ### email_checker
 Either replace the references to the `constants` module or make one yourself, defining the following constants:
