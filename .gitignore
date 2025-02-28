@@ -173,3 +173,4 @@ cython_debug/
 # Custom
 personal
 constants.py
+output.html
