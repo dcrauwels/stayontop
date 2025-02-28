@@ -1,7 +1,12 @@
-import requests
 import constants
 import strutils
+import time
 import emailchecker
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
 def page_scraper(location: str):
@@ -9,17 +14,25 @@ def page_scraper(location: str):
         # get page data
         street_name = strutils.split_and_clean(location)[0]
         
+        # set up selenium as firefox
+        driver = webdriver.Firefox()
+        driver.get(constants.AGENCY_URL)
 
-        # pretend I'm a real boy
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Referer': 'https://www.google.com/'
-        }
-        response = requests.get(constants.AGENCY_URL, headers=headers)
+        # get page and write to output.html        
+        '''wait = WebDriverWait(driver, 30)
+        wait.until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, "div.media:nth-child(3) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1) > h4:nth-child(1)"), 
+                "Joubertstraat"
+            )
+        )'''
+        time.sleep(10)
         with open('output.html', 'w') as dumpfile: # get me a copy man
-            dumpfile.write(response.text)
+            dumpfile.write(driver.page_source)
+
+        print("mission accomplished")
+        driver.quit()
+        return
 
         soup = BeautifulSoup(response.text, "html.parser")
 
@@ -43,6 +56,8 @@ def page_scraper(location: str):
             print(f"Property URL: {full_url}")
         else:
             print(f"Property with name {street_name} not found on page {constants.AGENCY_URL}.")
+
+        driver.close()
 
 
 

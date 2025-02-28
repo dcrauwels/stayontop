@@ -2,13 +2,13 @@
 Automates webform fillouts in response to email triggers from a certain Dutch rental agency in Python. Was made to interact with emails sent to a Gmail address. Personal project that I threw on Github, really.
 
 # Requirements
-- python3
-- selenium 4.29+
-- beautifulsoup4 4.13+
+- `python3`
+- `selenium` 4.29+
+- `beautifulsoup4` 4.13+
 
 # Use
 ## Requirements
-Install selenium and beautifulsoup4:
+Install `selenium` and `beautifulsoup4`:
 
 `pip3 install selenium beautifulsoup4`
 
@@ -27,8 +27,9 @@ Either replace the references to the `constants` module or make one yourself, de
 - `AGENCY_ADDRESS`: this is the email address that you are scanning for emails from. Ex: `offers@realagency.com`
 - `AGENCY_URL`: this is the url for the website you are going to scrape for the location taken from the email notification. Ex: `www.realagency.com`
 - `REGSTR`: this is a regex string to find the location name that you are scraping the website for. Ex: `Now Available: (.+, .+)` for `Now Available: 40th. Str., NYC`
-- `SEPARATOR`: this is a single character string (I hope) by which you split the resulting string
+- `SEPARATOR`: this is a single character string (I hope) by which you split the resulting string. Ex `','` for `40th. Str., NYC`.
 
-Note that the current version of this script scans the email *subject*. If you want, you can scan the body instead by editing the `match = re.search(constants.REGSTR, subject)` statement near the end of the `email_checker()` function in `emailchecker.py`.
+Note that the current version of this script scans the email *subject*. If you want, you can scan the body instead by editing the `match = re.search(constants.REGSTR, subject)` statement near the end of the `email_checker()` function in `emailchecker.py` to `match = re.search(constants.REGSTR, body)`.
 
 ### page_scraper
+We use `selenium` to render the page before scraping.
