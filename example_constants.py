@@ -1,6 +1,8 @@
 USERNAME = "username@gmail.com"
 PASSWORD = "password"
 IMAP_SERVER = "imap.gmail.com"
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
 AGENCY_ADDRESS = "offers@realagency.com"
 AGENCY_URL = "https://www.realagency.com"
 REGSTR = "Now Available: (.+, .+)"
