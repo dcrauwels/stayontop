@@ -5,6 +5,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
+
 
 def find_url(location: str) -> str:
     # get page data
@@ -23,12 +25,16 @@ def find_url(location: str) -> str:
     )
 
     # find  url
-    element = driver.find_element(By.XPATH, f"//h4[contains(text(), '{street_name}')]/parent::a")
-    url = element.get_attribute("href")
-    print(type(url))
-    
-    driver.quit()
-    return url
+    try:
+        element = driver.find_element(By.XPATH, f"//h4[contains(text(), '{street_name}')]/parent::a")
+        url = element.get_attribute("href")    
+        driver.quit()
+        return url
+    except NoSuchElementException: # in case we can load the website but it doesn't have the property we think we're looking for
+        print(f"{street_name} not found on {constants.AGENCY_URL}")
+        strutils.write_log(True, True, location, False, None, False)
+        driver.quit()
+        return None
 
 
 def send_form(url) -> None:
