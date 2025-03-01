@@ -30,11 +30,12 @@ def find_url(location: str) -> str:
         url = element.get_attribute("href")    
         driver.quit()
         return url
+    
     except NoSuchElementException: # in case we can load the website but it doesn't have the property we think we're looking for
         print(f"{street_name} not found on {constants.AGENCY_URL}")
         strutils.write_log(True, True, location, False, None, False)
         driver.quit()
-        return None
+        return None 
 
 
 def send_form(url) -> None:
