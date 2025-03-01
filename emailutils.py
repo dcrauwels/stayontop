@@ -111,8 +111,12 @@ def email_checker() -> str:
             no_match_message = "No location found in email"
             print(no_match_message)
             strutils.write_log(True, False, None, False, None, False)
-            send_email("WARNING: Stayontop no location", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} but no location seems to be present. Please check the email manually.")
             mail.store(mid, '+FLAGS', '\\Seen') # mark the unmatched email as read if we know a warning mail has been sent
+            
+            # get out
+            mail.close()
+            mail.logout()
+            return ""
 
         
     
