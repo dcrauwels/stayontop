@@ -1,20 +1,25 @@
 import imaplib
+import smtplib
 import email
-import constants # server address, username, password, agency address etc. are stored here.
+import constants # server address, username, password, agency address etc. are stored here. You have to set this yourself.
 import re
+import strutils
 from email.header import decode_header
+from email.mime.text import MIMEText
 
 def email_checker() -> str:
-
     # Connect to imap server
     try:
         mail = imaplib.IMAP4_SSL(constants.IMAP_SERVER)
         mail.login(constants.USERNAME, constants.PASSWORD)
         mail.select("inbox", readonly=True) # NOTE that this will keep the email unread. need to set this to False later
-        print("IMAP login successful.")
+        success_message = "IMAP login successful."
+        print(success_message)
 
     except Exception as e:
-        print(f"IMAP login failed: {e}")
+        error_message = f"IMAP login failed: {e}"
+        print(error_message)
+        strutils.write_log(error_message)
         exit() #stop the rest of the script if IMAP fails.
 
 
@@ -48,11 +53,15 @@ def email_checker() -> str:
 
         if match:
             location = match.group(1)
-            print(f"Location found: {location}")
+            match_message = f"Location found in email: {location}"
+            print(match_message)
+            strutils.write_log(match_message)
             return location
         else:
-            print("No location found")
-            return ""
+            no_match_message = "No location found in email"
+            print(no_match_message)
+            strutils.write_log(no_match_message)
+            return None
         
 
     mail.close()
@@ -60,4 +69,4 @@ def email_checker() -> str:
 
 
 if __name__ == "__main__":
-    email_checker()
+    print("please run stayontop.py")

@@ -175,3 +175,4 @@ personal
 constants.py
 output.html
 generated
+*log.csv
