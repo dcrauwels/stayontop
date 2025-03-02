@@ -14,14 +14,14 @@ Install `Selenium`:
 
 Install geckodriver:
 
-    wget https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-linux64.tar.gz
-    tar -xvzf geckodriver-v0.33.0-linux64.tar.gz
+    wget https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz
+    tar -xvzf geckodriver-v0.36.0-linux64.tar.gz
     sudo mv geckodriver /usr/local/bin/
 
 ## Setup
-### email_checker
-A number of constants are used in this script which are personal to my usecase. For obvious reasons, I am not sharing the actual constants, so you have to set it up yourself. An `example_constants.py` file has been provided and the script expects a `constants.py` module. This means you need to rename `example_constants.py` to `constants.py` and fill out values yourself.
-Either replace the references to the `constants` module or make one yourself, defining the following constants:
+### Constants
+A number of constants are used in this script which are personal to my usecase. For obvious reasons, I am not sharing the actual constants, so you have to set it up yourself. An `example_constants.py` file has been provided and the script expects a `constants.py` module. This means you need to rename `example_constants.py` to `constants.py` and fill out values yourself:
+
 - `USERNAME`: this is your email username. Ex: `username`
 - `PASSWORD`: this is your email password. Ex: `password123`. Note that I use Gmail, and if you do so as well, you will need to use an app password (Google it) if you use 2FA.
 - `IMAP_SERVER`: this is the IMAP server address. For Gmail, this is `imap.gmail.com`. 
@@ -39,11 +39,10 @@ Either replace the references to the `constants` module or make one yourself, de
 
 Note that the current version of this script scans the email *subject*. If you want, you can scan the body instead by editing the `match = re.search(constants.REGSTR, subject)` statement near the end of the `email_checker()` function in `emailchecker.py` to `match = re.search(constants.REGSTR, body)`.
 
-### page_scraper
-We use `Selenium` to render the page before scraping. Make sure to install it before setting up the rest of this script.
-
 ### cron
 The script checks your email and scrapes the website etc. *once*. We want to execute this very frequently, let's say every five minutes. There's plenty of ways of doing so, but my solution was setting up a cron job on my Raspberry Pi. Something like this will work:
+
     crontab -e
     */5 * * * * /usr/bin/python3 /home/pi/stayontop.py
+
 Obviously adjust the path to `stayontop.py` as you see fit.
