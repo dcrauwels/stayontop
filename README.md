@@ -31,9 +31,19 @@ Either replace the references to the `constants` module or make one yourself, de
 - `AGENCY_URL`: this is the url for the website you are going to scrape for the location taken from the email notification. Ex: `www.realagency.com`
 - `REGSTR`: this is a regex string to find the location name that you are scraping the website for. Ex: `Now Available: (.+, .+)` for `Now Available: 40th. Str., NYC`
 - `SEPARATOR`: this is a single character string (I hope) by which you split the resulting string. Ex `','` for `40th. Str., NYC`. Can be set to `''` if your usecase requires it and it will skip the string split.
-- `CSS_
+- `NAME`: this is your own name, to be filled out on the form.
+- `EMAIL`: this is your email address, to be filled out on the form.
+- `PHONE`: this is your phone number, to be filled out on the form.
+- `MESSAGE_FIRST_HALF`: first half of the message to be filled out on the form. Expects to be combined with `MESSAGE_SECOND_HALF` in the following way: `MESSAGE_FIRST_HALF + location_name + MESSAGE_SECOND_HALF + NAME`. Ex: `Good day, I like the property at 40th. Str., and would like to arrange a viewing. Kind regards, John`
+- `MESSAGE_SECOND_HALF`: second half of the message to be filled out on the form. See above.
 
 Note that the current version of this script scans the email *subject*. If you want, you can scan the body instead by editing the `match = re.search(constants.REGSTR, subject)` statement near the end of the `email_checker()` function in `emailchecker.py` to `match = re.search(constants.REGSTR, body)`.
 
 ### page_scraper
-We use `Selenium` to render the page before scraping.
+We use `Selenium` to render the page before scraping. Make sure to install it before setting up the rest of this script.
+
+### cron
+The script checks your email and scrapes the website etc. *once*. We want to execute this very frequently, let's say every five minutes. There's plenty of ways of doing so, but my solution was setting up a cron job on my Raspberry Pi. Something like this will work:
+    crontab -e
+    */5 * * * * /usr/bin/python3 /home/pi/stayontop.py
+Obviously adjust the path to `stayontop.py` as you see fit.

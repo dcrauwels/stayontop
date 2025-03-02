@@ -10,6 +10,7 @@ def main() -> None:
         emailutils.send_email("WARNING: Stayontop cannot find location", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} but no location seems to be present. Please check the email manually ASAP.")
         return None
     elif not location: # means we did not find an email matching the agency email address
+        print("- result: no email found")
         return None
 
     
@@ -18,11 +19,17 @@ def main() -> None:
     if not url: # means find_url() returned None, which means we have a location name but could not find it on the main website.
         street_name = strutils.split_and_clean(location)[0]
         emailutils.send_email("WARNING: Stayontop cannot find url", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} describing a property at {location}. However, it seems {street_name} cannot be found at {constants.AGENCY_URL}. Please check the website manually asap.")
+        print("- result: email found but no url found")
+        return None
 
     # step 3: fill out form on property url
-    form = pageutils.send_form(url)
+    form = pageutils.send_form(location, url)
     if not form:
         emailutils.send_email("WARNING: Stayontop cannot fill out form",f"Stayontop has found a property url at {url} but cannot fill out the form therein. Please check the url manually ASAP.")
+        print("- result: email found and url found but no form sent")
+        return None
+    
+    print("- result: email found and url found and form sent")
     
     return None
 

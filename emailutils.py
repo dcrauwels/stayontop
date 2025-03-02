@@ -62,7 +62,7 @@ def email_checker() -> str:
     except Exception as e:
         error_message = f"IMAP login failed: {e}"
         print(error_message)
-        strutils.write_log(False, False, None, False, None, False)
+        strutils.write_log(False, False, False, None, False, None, False)
         return None #stop the rest of the script if IMAP fails.
 
 
@@ -110,7 +110,7 @@ def email_checker() -> str:
             # this means we have an email from the correct sender but without a matching subject. we do two things: log this event and send a warning email to self
             no_match_message = "No location found in email"
             print(no_match_message)
-            strutils.write_log(True, False, None, False, None, False)
+            strutils.write_log(True, True, False, None, False, None, False)
             mail.store(mid, '+FLAGS', '\\Seen') # mark the unmatched email as read if we know a warning mail has been sent
             
             # get out
@@ -122,6 +122,8 @@ def email_checker() -> str:
     
     mail.close()
     mail.logout()
+
+    strutils.write_log(True, False, False, None, False, None, False)
 
     return None
 
