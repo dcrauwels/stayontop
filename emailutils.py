@@ -161,6 +161,25 @@ def email_checker():
 
     return location, subject, message_id, references
 
+def main():
+    '''Send an email with the largest log file.'''
+    # get files in logs folder
+    largest_path = None
+    largest_size = 0
+
+    #simply iterate over files to identify largest file in directory. should not be too taxing
+    for filename in os.listdir("logs"):
+        filepath = os.path.join("logs", filename)
+        if os.path.isfile(filepath):
+            file_size = os.path.getsize(filepath)
+            if file_size > largest_size:
+                largest_size = file_size
+                largest_path = filepath
+
+    # send email for largest one
+    send_email(constants.EMAIL, f"Stayontop logs", "", largest_path)
+    return
+
 
 if __name__ == "__main__":
-    print("please run stayontop.py")
+    main()

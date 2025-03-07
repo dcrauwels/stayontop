@@ -42,3 +42,6 @@ def write_log(login_succeeded: bool, email_found: bool, location_found: bool, lo
         print(f"written to log on {current_date} at {current_time}")
 
     return None
+
+if __name__ == "__main__":
+    print("please run stayontop.py")
