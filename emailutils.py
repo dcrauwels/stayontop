@@ -75,10 +75,14 @@ def email_checker():
 
     Returns:
         location: a string naming the street name of the property referred to in the email.
-        subject: the entire email subject.'''
+        subject: the email subject.
+        message-id: the email message-ID. Useful for the send_email() function, in particular the in_reply_to keyword argument.
+        references: the email references. Useful for the send_email() function, in particular the references keyword argument.'''
     # init
     location = None
     subject = None
+    message_id = None
+    references = None
 
 
     # Connect to imap server
@@ -93,7 +97,7 @@ def email_checker():
         error_message = f"IMAP login failed: {e}"
         print(error_message)
         strutils.write_log(False, False, False, None, False, None, False)
-        return location, subject #stop the rest of the script if IMAP fails.
+        return location, subject, message_id, references #stop the rest of the script if IMAP fails.
 
     # Search for unread emails
     _, messages = mail.search(None, f'(UNSEEN FROM "{constants.AGENCY_ADDRESS}")')
@@ -121,6 +125,10 @@ def email_checker():
         else:
             body = emessage.get_payload(decode=True).decode()
 
+        #message-id and references
+        message_id = emessage.get("message-id")
+        references = emessage.get("references")
+
         # check for property name
         match = re.search(constants.REGSTR, subject) # currently only checking on subject as in my case the property name is in the email subject
 
@@ -134,7 +142,7 @@ def email_checker():
             # get out
             mail.close()
             mail.logout()
-            return location, subject
+            return location, subject, message_id, references
         else:
             # this means we have an email from the correct sender but without a matching subject. we do two things: log this event and send a warning email to self
             no_match_message = "No location found in email"
@@ -145,7 +153,7 @@ def email_checker():
             # get out
             mail.close()
             mail.logout()
-            return "", subject
+            return "", subject, message_id, references
 
         
     

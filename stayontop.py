@@ -5,7 +5,7 @@ import strutils
 
 def main() -> None:
     # step 1: parse email for location
-    location, subject = emailutils.email_checker()
+    location, subject, message_id, references = emailutils.email_checker()
     if location == "": # means email_checker() returned an empty string, which means we found a relevant email but did not manage to extract a location. Worrying.
         emailutils.send_email(constants.EMAIL, "WARNING: Stayontop cannot find location", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} but no location seems to be present. Please check the email manually ASAP.")
         return None
@@ -39,7 +39,7 @@ def main() -> None:
     message = constants.MESSAGE_FIRST_HALF + location + constants.MESSAGE_SECOND_HALF + name
     reply_subject = "Re: " + subject
     
-    emailutils.send_email(constants.EMAIL, reply_subject, message, None, in_reply_to = "", references = "")
+    emailutils.send_email(constants.EMAIL, reply_subject, message, None, in_reply_to = message_id, references = references) #NOTE that this replies to self right now, not to 
     
     print("- result: email found and url found and reply sent")
     
