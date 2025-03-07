@@ -179,7 +179,5 @@ def send_form(location, url) -> str:
 
 
 if __name__ == "__main__":
-    res = get_property_details_from_url("Morskade", "https://www.stayvastgoed.nl/woning?Leiden/Morskade/H101160110")
-    print(res)
-    #print("please run stayontop.py")
+    print("please run stayontop.py")
     

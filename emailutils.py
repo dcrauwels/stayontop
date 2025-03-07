@@ -64,7 +64,6 @@ def send_email(to: str, subject: str, body: str, attachment_path: str = None, **
         server.starttls()
         server.login(constants.USERNAME, constants.PASSWORD)
         server.send_message(msg)
-        print("Email sent.")
     return None
 
 def email_checker():
@@ -136,8 +135,6 @@ def email_checker():
             # this means we have an email from the correct sender and with a matching subject. Great! Parse out the location and return it.
             mail.store(mid, '+FLAGS', '\\Seen') # mark the matched email as read
             location = match.group(1)
-            match_message = f"Location found in email: {location}"
-            print(match_message)
             
             # get out
             mail.close()
@@ -162,7 +159,7 @@ def email_checker():
 
     strutils.write_log(True, False, False, None, False, None, False)
 
-    return None
+    return location, subject, message_id, references
 
 
 if __name__ == "__main__":
