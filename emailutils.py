@@ -11,8 +11,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 
-def send_email(subject: str, body: str, attachment_path: str = None) -> None:
+def send_email(to: str, subject: str, body: str, attachment_path: str = None) -> None:
     '''Send an email to own email address. For notification purposes. Basically this is only triggered when we process an email that matches the desired address (i.e. rental agency) as a safeguard in case something goes wrong. Takes three arguments:
+    - `to`: string, describes the destination email address.
     - `subject`: string, describes the email subject.
     - `body`: string, describes the email body.
     - `attachment_path`: string, optional, describes the path to an attachment. Mainly I use this to email myself the logs nightly and then delete them from disk.'''
@@ -21,7 +22,7 @@ def send_email(subject: str, body: str, attachment_path: str = None) -> None:
     msg = MIMEMultipart()
     msg["subject"] = subject
     msg["From"] = constants.USERNAME
-    msg["To"] = constants.USERNAME
+    msg["To"] = to
     msg.attach(MIMEText(body, "plain"))
 
     # in case we get an attachment set it as a MIME part
