@@ -11,18 +11,34 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 
-def send_email(to: str, subject: str, body: str, attachment_path: str = None) -> None:
-    '''Send an email to own email address. For notification purposes. Basically this is only triggered when we process an email that matches the desired address (i.e. rental agency) as a safeguard in case something goes wrong. Takes three arguments:
-    - `to`: string, describes the destination email address.
-    - `subject`: string, describes the email subject.
-    - `body`: string, describes the email body.
-    - `attachment_path`: string, optional, describes the path to an attachment. Mainly I use this to email myself the logs nightly and then delete them from disk.'''
+def send_email(to: str, subject: str, body: str, attachment_path: str = None, **kwargs) -> None:
+    '''Send an email to email address.
+
+    Mandatory arguments:
+        to: string, describes the destination email address.
+        subject: string, describes the email subject.
+        body: string, describes the email body.
+
+    Optional arguments:
+        attachment_path: string, optional, describes the path to an attachment. Mainly I use this to email myself the logs nightly and then delete them from disk.
+        in_reply_to: string, Message-ID of the email being replied to'''
 
     # construct email
     msg = MIMEMultipart()
     msg["subject"] = subject
     msg["From"] = constants.USERNAME
     msg["To"] = to
+    
+    # kwargs
+    if "in_reply_to" in kwargs:
+        in_reply_to = kwargs["in_reply_to"]
+        msg["In-Reply-To"] = in_reply_to
+        if "references" in kwargs:
+            references = kwargs["references"]
+            msg["References"] = f"{references} {in_reply_to}"
+        else:
+            msg["References"] = in_reply_to
+        
     msg.attach(MIMEText(body, "plain"))
 
     # in case we get an attachment set it as a MIME part
@@ -51,7 +67,20 @@ def send_email(to: str, subject: str, body: str, attachment_path: str = None) ->
         print("Email sent.")
     return None
 
-def email_checker() -> str:
+def email_checker():
+    '''Checks email for new messages matching a specific pattern from a predefined sender. Currently only checks email subjects. Works with gmail.
+
+    Args:
+        none
+
+    Returns:
+        location: a string naming the street name of the property referred to in the email.
+        subject: the entire email subject.'''
+    # init
+    location = None
+    subject = None
+
+
     # Connect to imap server
     try:
         mail = imaplib.IMAP4_SSL(constants.IMAP_SERVER)
@@ -64,8 +93,7 @@ def email_checker() -> str:
         error_message = f"IMAP login failed: {e}"
         print(error_message)
         strutils.write_log(False, False, False, None, False, None, False)
-        return None #stop the rest of the script if IMAP fails.
-
+        return location, subject #stop the rest of the script if IMAP fails.
 
     # Search for unread emails
     _, messages = mail.search(None, f'(UNSEEN FROM "{constants.AGENCY_ADDRESS}")')
@@ -94,7 +122,7 @@ def email_checker() -> str:
             body = emessage.get_payload(decode=True).decode()
 
         # check for property name
-        match = re.search(constants.REGSTR, subject) # currently only checking on subject as in my case the 
+        match = re.search(constants.REGSTR, subject) # currently only checking on subject as in my case the property name is in the email subject
 
         if match:
             # this means we have an email from the correct sender and with a matching subject. Great! Parse out the location and return it.
@@ -106,7 +134,7 @@ def email_checker() -> str:
             # get out
             mail.close()
             mail.logout()
-            return location
+            return location, subject
         else:
             # this means we have an email from the correct sender but without a matching subject. we do two things: log this event and send a warning email to self
             no_match_message = "No location found in email"
@@ -117,7 +145,7 @@ def email_checker() -> str:
             # get out
             mail.close()
             mail.logout()
-            return ""
+            return "", subject
 
         
     

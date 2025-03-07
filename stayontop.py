@@ -5,7 +5,7 @@ import strutils
 
 def main() -> None:
     # step 1: parse email for location
-    location = emailutils.email_checker()
+    location, subject = emailutils.email_checker()
     if location == "": # means email_checker() returned an empty string, which means we found a relevant email but did not manage to extract a location. Worrying.
         emailutils.send_email(constants.EMAIL, "WARNING: Stayontop cannot find location", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} but no location seems to be present. Please check the email manually ASAP.")
         return None
@@ -28,17 +28,20 @@ def main() -> None:
         emailutils.send_email(constants.EMAIL, "WARNING: Stayontop cannot parse website", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} describing a property at {location}. A corresponding url was found at {url}. However, parsing the website at that url did not produce a workable property size or price. Please check the website manually asap.")
         print("- result: email found and url found but no price/size found")
         return None
-
-
-
-    # step 3: fill out form on property url
-    form = pageutils.send_form(location, url)
-    if not form:
-        emailutils.send_email(constants.EMAIL, "WARNING: Stayontop cannot fill out form",f"Stayontop has found a property url at {url} but cannot fill out the form therein. Please check the url manually ASAP.")
-        print("- result: email found and url found but no form sent")
+    if size <= 30:
+        emailutils.send_email(constants.EMAIL, "WARNING: Stayontop found a small property", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} describing a property at {location}. A corresponding url was found at {url}. The website describes the property as costing € {price} per month for {size} square meters, which is less than 30. The realtor has not been contacted. You can consider the property yourself if you so wish.")
+        print("- result: email fround and url found and price/size found but size too small")
         return None
+
+    # step 4: return email
+    name = constants.NAME
+    agency_address = constants.AGENCY_ADDRESS
+    message = constants.MESSAGE_FIRST_HALF + location + constants.MESSAGE_SECOND_HALF + name
+    reply_subject = "Re: " + subject
     
-    print("- result: email found and url found and form sent")
+    emailutils.send_email(constants.EMAIL, reply_subject, message, None, in_reply_to = "", references = "")
+    
+    print("- result: email found and url found and reply sent")
     
     return None
 
