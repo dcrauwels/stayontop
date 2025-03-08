@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.firefox.options import Options
 
 
 
@@ -17,7 +18,9 @@ def find_url(location: str) -> str:
     street_name = strutils.split_and_clean(location)[0]
     
     # set up selenium as firefox
-    driver = webdriver.Firefox()
+    opt = Options()
+    opt.add_argument('-headless')
+    driver = webdriver.Firefox(options = opt)
     driver.get(constants.AGENCY_URL)
 
     # get page
@@ -45,7 +48,9 @@ def find_url(location: str) -> str:
 def get_property_details_from_url(location, url):
     '''Returns the monthly rent in euros and property size in square meters. Both are returned as int values.'''
     # setup selenium
-    driver = webdriver.Firefox()
+    opt = Options()
+    opt.add_argument('-headless')
+    driver = webdriver.Firefox(options=opt)
     driver.get(url)
 
     price, size = str(None), str(None)
@@ -126,7 +131,9 @@ def send_form(location, url) -> str:
     '''Uses the property `url` gleaned from `pageutils.find_url()` to fill out the webform on said url.'''
 
     # setup selenium
-    driver = webdriver.Firefox()
+    opt = Options()
+    opt.add_argument('-headless')
+    driver = webdriver.Firefox(options=opt)
     driver.get(url)
 
     # get page  

@@ -51,7 +51,7 @@ The script checks your email and scrapes the website etc. *once*. We want to exe
     */5 * * * * /usr/bin/python3 /home/pi/stayontop.py
     0 1 * * * /usr/bin/python3 /home/pi/emailutils.py
 
-Obviously adjust the path to `stayontop.py` and `emailutils.py` as you see fit.
+Obviously adjust the path to `stayontop.py` and `emailutils.py` as you see fit. In particular, on newer Raspbian distros you will need to adjust `/home/pi` to `/home/USERNAME`.
 
 Regarding the daily `emailutils.py` cron job: it will execute at 1 AM in this example. Given that it searches for the largest file in the `logs` directory and emails it to you (based on `constants.EMAIL`) it will email logs from the previous day. Note that if you get an email without an attachment, it means no logging has been taking place. That's reason for concern!
 
