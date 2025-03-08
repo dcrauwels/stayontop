@@ -31,7 +31,10 @@ def write_log(login_succeeded: bool, email_found: bool, location_found: bool, lo
     current_time = now.strftime("%H:%M:%S")
 
     # setup log
-    log_name = f"logs/{current_date}-stayontop-log.csv"
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    logs_dir = os.path.join(script_dir, "logs")
+    os.makedirs(logs_dir, exist_ok=True)
+    log_name = os.path.join(logs_dir, f"{current_date}-stayontop-log.csv")
     log_exists = os.path.exists(log_name)
 
     with open(log_name, 'a') as log:
