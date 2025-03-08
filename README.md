@@ -8,15 +8,16 @@ Automates webform fillouts in response to email triggers from a certain Dutch re
 
 
 # Use
-## Requirements
+## Prerequisites
+### For Raspberry Pi 3 (using ARM64 architecture)
 Install `Selenium`:
 
-    pip3 install selenium
+    apt install python3-selenium
 
 Install geckodriver:
 
-    wget https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz
-    tar -xvzf geckodriver-v0.36.0-linux64.tar.gz
+    wget https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux-aarch64.tar.gz
+    tar -xvzf geckodriver-v0.36.0-linux-aarch64.tar.gz
     sudo mv geckodriver /usr/local/bin/
 
 ## Setup
