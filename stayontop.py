@@ -44,7 +44,7 @@ def main() -> None:
     message = constants.MESSAGE_FIRST_HALF + street_name + constants.MESSAGE_SECOND_HALF + name
     reply_subject = "Re: " + subject
     
-    emailutils.send_email(constants.EMAIL, reply_subject, message, None, in_reply_to = message_id, references = references) #NOTE that this replies to self right now, not to 
+    emailutils.send_email(agency_address, reply_subject, message, None, in_reply_to = message_id, references = references) #NOTE that this replies to self right now, not to 
     
     print("- result: email found and url found and reply sent")
     

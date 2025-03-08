@@ -5,6 +5,8 @@ import constants # server address, username, password, agency address etc. are s
 import re
 import strutils
 import os
+import pathlib
+
 from email.header import decode_header
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -178,6 +180,8 @@ def main():
 
     # send email for largest one
     send_email(constants.EMAIL, f"Stayontop logs", "", largest_path)
+    if largest_path:
+        pathlib.Path.unlink(largest_path)
     return
 
 
