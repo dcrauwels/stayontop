@@ -19,7 +19,7 @@ def find_url(location: str) -> str:
     
     # set up selenium as firefox
     opt = Options()
-    opt.add_argument('-headless')
+    opt.add_argument('-headless') #for rpi
     driver = webdriver.Firefox(options = opt)
     driver.get(constants.AGENCY_URL)
 
@@ -49,7 +49,7 @@ def get_property_details_from_url(location, url):
     '''Returns the monthly rent in euros and property size in square meters. Both are returned as int values.'''
     # setup selenium
     opt = Options()
-    opt.add_argument('-headless')
+    opt.add_argument('-headless') #for rpi
     driver = webdriver.Firefox(options=opt)
     driver.get(url)
 
@@ -132,7 +132,7 @@ def send_form(location, url) -> str:
 
     # setup selenium
     opt = Options()
-    opt.add_argument('-headless')
+    opt.add_argument('-headless') # this is so you dont need to hook up a monitor to your RPI to make this work. can comment it out when debugging.
     driver = webdriver.Firefox(options=opt)
     driver.get(url)
 

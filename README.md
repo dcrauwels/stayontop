@@ -1,5 +1,8 @@
 # stayontop
-Automates webform fillouts in response to email triggers from a certain Dutch rental agency in Python. Was made to interact with emails sent to a Gmail address. Personal project that I threw on Github, really.
+Scrapes Gmail account, then webpage periodically. Small homebrew project for a real estate agent where responding to new offers in a timely fashion was paramount but the content of the response could easily be automated.
+
+# to-do
+Basically this works as intended now. For fun I could try running the automated reply through one of these LLM services to get a slightly different email every time ...
 
 # Requirements
 - `python3`
@@ -45,7 +48,7 @@ A number of constants are used in this script which are personal to my usecase. 
 Note that the current version of this script scans the email *subject*. If you want, you can scan the body instead by editing the `match = re.search(constants.REGSTR, subject)` statement near the end of the `email_checker()` function in `emailchecker.py` to `match = re.search(constants.REGSTR, body)`. Obviously, you will need to be more specific with the regex string in `constants.REGSTR` accordingly.
 
 ### cron
-The script checks your email and scrapes the website etc. *once*. We want to execute this very frequently, let's say every five minutes. There's plenty of ways of doing so, but my solution was setting up a cron job on my Raspberry Pi. Additionally, directly running `emailutils.py` will take the largest logfile and email it to you. It's intended for a daily cron job. Combining the two, we get:
+The script checks your email and scrapes the website etc. *once*. We want to execute this very frequently, let's say every five (5) minutes. There's plenty of ways of doing so, but my solution was setting up a cron job on my Raspberry Pi. Additionally, directly running `emailutils.py` will take the largest logfile and email it to you. It's intended for a daily cron job. Combining the two, we get:
 
     crontab -e
     */5 * * * * /usr/bin/python3 /home/pi/stayontop.py
