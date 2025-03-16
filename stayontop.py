@@ -31,12 +31,12 @@ def main() -> None:
         emailutils.send_email(constants.EMAIL, "WARNING: Stayontop cannot parse website", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} describing a property at {location}. A corresponding url was found at {url}. However, parsing the website at that url did not produce a workable property size or price. Please check the website manually asap.")
         print("- result: email found and url found but no price/size found")
         return None
-    if size <= 30:
+    if size <= constants.MINIMUM_SIZE:
         emailutils.send_email(constants.EMAIL, "WARNING: Stayontop found a small property", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} describing a property at {location}. A corresponding url was found at {url}. The website describes the property as costing € {price} per month for {size} square meters, which is less than 30. The realtor has not been contacted. You can consider the property yourself if you so wish.")
-        print("- result: email fround and url found and price/size found but size too small")
+        print("- result: email found and url found and price/size found but size too small")
         return None
     
-    print(f"  Property seems to be over 30 square meters in size - sending email!")
+    print(f"  Property seems to be over {constants.MINIMUM_SIZE} square meters in size - sending email!")
 
     # step 4: return email
     name = constants.NAME
