@@ -8,6 +8,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
+from webdriver_manager.firefox import GeckoDriverManager
 
 
 
@@ -20,7 +22,8 @@ def find_url(location: str) -> str:
     # set up selenium as firefox
     opt = Options()
     opt.add_argument('-headless') #for rpi
-    driver = webdriver.Firefox(options = opt)
+    srv = Service(GeckoDriverManager().install()) # just werks
+    driver = webdriver.Firefox(options = opt, service = srv)
     driver.get(constants.AGENCY_URL)
 
     # get page
