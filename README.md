@@ -13,9 +13,11 @@ Basically this works as intended now. For fun I could try running the automated 
 # Use
 ## Prerequisites
 ### For Raspberry Pi 3 (using ARM64 architecture)
-Install `Selenium`:
+Install `Selenium` and the `OpenAI` Python package. You may need to setup a virtual environment for this. Note that you will have to adapt the cron `python3` path if you do so.
 
-    apt install python3-selenium
+    pip install selenium
+    pip install openai
+
 
 Install geckodriver:
 

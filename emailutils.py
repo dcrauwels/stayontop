@@ -13,7 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 
-def send_email(to: str, subject: str, body: str, attachment_path: str = None, **kwargs) -> None:
+def send_email(to: str, subject: str, body: str, rewrite: bool = None, attachment_path: str = None, **kwargs) -> None:
     '''Send an email to email address.
 
     Mandatory arguments:
@@ -22,6 +22,7 @@ def send_email(to: str, subject: str, body: str, attachment_path: str = None, **
         body: string, describes the email body.
 
     Optional arguments:
+        rewrite: bool, optional, describes whether to rewrite the email using OpenAI API as executed with `strutils.rewrite_email()`.
         attachment_path: string, optional, describes the path to an attachment. Mainly I use this to email myself the logs nightly and then delete them from disk.
         in_reply_to: string, Message-ID of the email being replied to'''
 
@@ -43,6 +44,10 @@ def send_email(to: str, subject: str, body: str, attachment_path: str = None, **
         
     msg.attach(MIMEText(body, "plain"))
 
+    # rewrite?
+    if rewrite:
+        body = strutils.rewrite_email(body)
+
     # in case we get an attachment set it as a MIME part
     if attachment_path and os.path.exists(attachment_path):
         # read in file
@@ -61,7 +66,7 @@ def send_email(to: str, subject: str, body: str, attachment_path: str = None, **
     elif attachment_path:
         print(f"Attachment file not found at path '{attachment_path}'.")
     
-
+    # send email
     with smtplib.SMTP(constants.SMTP_SERVER, constants.SMTP_PORT) as server:
         server.starttls()
         server.login(constants.USERNAME, constants.PASSWORD)
@@ -179,7 +184,7 @@ def main():
                 largest_path = filepath
 
     # send email for largest one
-    send_email(constants.EMAIL, f"Stayontop logs", "", largest_path)
+    send_email(constants.EMAIL, f"Stayontop logs", "", False, largest_path)
     if largest_path:
         pathlib.Path.unlink(largest_path)
     return

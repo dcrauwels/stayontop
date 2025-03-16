@@ -1,5 +1,6 @@
 import constants
 import os
+import openai
 from datetime import datetime
 
 # header row for csv logfile
@@ -45,6 +46,51 @@ def write_log(login_succeeded: bool, email_found: bool, location_found: bool, lo
         print(f"written to log on {current_date} at {current_time}")
 
     return None
+
+def rewrite_email(original_email: str):
+    '''Rewrites an email using OpenAI API. 
+    
+    Args:
+    
+        original_email (str): The default email to be rewritten.
+        
+    Returns:
+    
+        str: Rewritten email'''
+    
+    try:
+        # get datetime
+        current_date = datetime.now().strftime("%B %d, %Y")
+
+        # create propmpt
+        prompt = f"""
+        Today is {current_date}.
+
+        Please rewrite the following email in the same language it was written in. The goal when rewriting is to make it sound slightly different while keeping the same meaning, tone and important information.
+        You can make small changes to sentence structure and word choice to make it unique. However, names must be preserved no matter what.
+
+        Original email:
+        {original_email}
+
+        Rewritten email:
+        """
+
+        # call openAI API
+        response = openai.ChatCompletion.create(
+            model = "gpt-3.5-turbo",
+            messages = [
+                {"role": "system", "content": "You are a helpful assistant that rewrites emails to make them unique while preserving the original meaning."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens = 1000,
+            temperature = 0.7
+        )
+
+        return response.choices[0].message.content.strip()
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return "Error rewriting email. Please check API key."
 
 if __name__ == "__main__":
     print("please run stayontop.py")
