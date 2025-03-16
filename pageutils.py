@@ -1,6 +1,7 @@
 import constants
 import strutils
 import re
+import os
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -70,6 +71,7 @@ def get_property_details_from_url(location, url):
             raise Exception("page did not load properly")
 
         # dump to html for debugging
+        os.makedirs("generated", exist_ok = True)
         with open("generated/url_selenium.html", 'w') as f:
             f.write(driver.page_source)
 
