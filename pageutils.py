@@ -1,6 +1,8 @@
 import constants
 import strutils
 import re
+import os
+os.environ['WDM_ARCHITECTURE'] = 'aarch64' # needs to go before the webdriver import
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -22,7 +24,7 @@ def find_url(location: str) -> str:
     # set up selenium as firefox
     opt = Options()
     opt.add_argument('-headless') #for rpi
-    srv = Service(GeckoDriverManager(os_type="linux-aarch64").install()) # just werks
+    srv = Service(GeckoDriverManager().install()) # just werks
     driver = webdriver.Firefox(options = opt, service = srv)
     driver.get(constants.AGENCY_URL)
 
