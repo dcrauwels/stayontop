@@ -1,6 +1,6 @@
 import constants
 import os
-import openai
+import google.generativeai as genai
 from datetime import datetime
 
 # header row for csv logfile
@@ -48,7 +48,7 @@ def write_log(login_succeeded: bool, email_found: bool, location_found: bool, lo
     return None
 
 def rewrite_email(original_email: str):
-    '''Rewrites an email using OpenAI API. 
+    '''Rewrites an email using Google Gemini API. 
     
     Args:
     
@@ -59,6 +59,9 @@ def rewrite_email(original_email: str):
         str: Rewritten email'''
     
     try:
+        # config for apikey
+        genai.configure(api_key = constants.LLM_API_KEY)
+
         # get datetime
         current_date = datetime.now().strftime("%B %d, %Y")
 
@@ -67,7 +70,7 @@ def rewrite_email(original_email: str):
         Today is {current_date}.
 
         Please rewrite the following email in the same language it was written in. The goal when rewriting is to make it sound slightly different while keeping the same meaning, tone and important information.
-        You can make small changes to sentence structure and word choice to make it unique. However, names must be preserved no matter what.
+        You can make changes to sentence structure and especially word choice to make it unique. However, names must be preserved no matter what.
 
         Original email:
         {original_email}
@@ -75,22 +78,25 @@ def rewrite_email(original_email: str):
         Rewritten email:
         """
 
-        # call openAI API
-        response = openai.ChatCompletion.create(
-            model = "gpt-3.5-turbo",
-            messages = [
-                {"role": "system", "content": "You are a helpful assistant that rewrites emails to make them unique while preserving the original meaning."},
-                {"role": "user", "content": prompt}
+        # initialize model
+        model = genai.GenerativeModel('models/gemini-2.0-flash-lite')
+
+        # call gemin API
+        response = model.generate_content(
+            contents=[
+                {"role": "user", "parts": [{"text": prompt}]}
             ],
-            max_tokens = 1000,
-            temperature = 0.7
+            generation_config={
+                "temperature": 0.7,
+                "max_output_tokens": 1000        
+            }
         )
 
-        return response.choices[0].message.content.strip()
+        return response.text.strip()
 
     except Exception as e:
         print(f"Error: {e}")
-        return "Error rewriting email. Please check API key."
+        return f"Error rewriting email: {str(e)}"
 
 if __name__ == "__main__":
     print("please run stayontop.py")

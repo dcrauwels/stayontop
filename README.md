@@ -13,10 +13,10 @@ Basically this works as intended now. For fun I could try running the automated 
 # Use
 ## Prerequisites
 ### For Raspberry Pi 3 (using ARM64 architecture)
-Install `Selenium` and the `OpenAI` Python package. You may need to setup a virtual environment for this. Note that you will have to adapt the cron `python3` path if you do so.
+Install `Selenium` and the `Google Gemini` Python package. You may need to setup a virtual environment for this. Note that you will have to adapt the cron `python3` path if you do so.
 
     pip install selenium
-    pip install openai
+    pip install google-generativeai
 
 
 Install geckodriver:
@@ -46,6 +46,7 @@ A number of constants are used in this script which are personal to my usecase. 
     PHONE: this is your phone number, to be filled out on the form. Currently unused.
     MESSAGE_FIRST_HALF: first half of the message to be filled out on the form. Expects to be combined with MESSAGE_SECOND_HALF in the following way: `MESSAGE_FIRST_HALF + location_name + MESSAGE_SECOND_HALF + NAME`. Ex: `Good day, I like the property at '.
     MESSAGE_SECOND_HALF: second half of the message to be filled out on the form. See above. Ex: `, and would like to arrange a viewing. Kind regards, `
+    LLM_API_KEY: an API key for an LLM AI service of your choice. I used Google's Gemini as it currently offers free API access.
 
 Note that the current version of this script scans the email *subject*. If you want, you can scan the body instead by editing the `match = re.search(constants.REGSTR, subject)` statement near the end of the `email_checker()` function in `emailchecker.py` to `match = re.search(constants.REGSTR, body)`. Obviously, you will need to be more specific with the regex string in `constants.REGSTR` accordingly.
 
