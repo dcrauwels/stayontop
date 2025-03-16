@@ -56,15 +56,18 @@ def get_property_details_from_url(location, url):
     driver = webdriver.Firefox(options = opt, service = srv)
     driver.get(url)
 
-    price, size = str(None), str(None)
+    price, size = 0, 0
 
     # scrape  
     try:
-        WebDriverWait(driver, 10).until(
+        text_found = WebDriverWait(driver, 30).until(
             EC.text_to_be_present_in_element(
                 (By.CSS_SELECTOR, "span.property-street"), location
             )
         )
+
+        if not text_found:
+            raise Exception("page did not load properly")
 
         # dump to html for debugging
         with open("generated/url_selenium.html", 'w') as f:
@@ -105,8 +108,8 @@ def get_property_details_from_url(location, url):
                             print(f"    Error finding sibling: {e}")
 
                
-    except TimeoutException:
-        print(f"Timed out waiting for element with text '{location}' to appear.")
+    except Exception as e:
+        print(f"Error trying to retrieve page details: {e}.")
         strutils.write_log(True,True,True,location,True,url,False)
 
     finally:
@@ -141,7 +144,7 @@ def send_form(location, url) -> str:
     driver.get(url)
 
     # get page  
-    is_text_found = WebDriverWait(driver, 10).until(
+    is_text_found = WebDriverWait(driver, 30).until(
         EC.text_to_be_present_in_element(
             (By.CSS_SELECTOR, "span.property-street"), location
         )
