@@ -1,8 +1,6 @@
 import constants
 import strutils
 import re
-import os
-os.environ['WDM_ARCHITECTURE'] = 'aarch64' # needs to go before the webdriver import
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -11,7 +9,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
-from webdriver_manager.firefox import GeckoDriverManager
 
 
 
@@ -24,7 +21,7 @@ def find_url(location: str) -> str:
     # set up selenium as firefox
     opt = Options()
     opt.add_argument('-headless') #for rpi
-    srv = Service(GeckoDriverManager().install()) # just werks
+    srv = Service('/usr/local/bin/geckodriver') # just werks
     driver = webdriver.Firefox(options = opt, service = srv)
     driver.get(constants.AGENCY_URL)
 
@@ -55,7 +52,8 @@ def get_property_details_from_url(location, url):
     # setup selenium
     opt = Options()
     opt.add_argument('-headless') #for rpi
-    driver = webdriver.Firefox(options=opt)
+    srv = Service('/usr/local/bin/geckodriver') # just werks
+    driver = webdriver.Firefox(options = opt, service = srv)
     driver.get(url)
 
     price, size = str(None), str(None)
@@ -138,7 +136,8 @@ def send_form(location, url) -> str:
     # setup selenium
     opt = Options()
     opt.add_argument('-headless') # this is so you dont need to hook up a monitor to your RPI to make this work. can comment it out when debugging.
-    driver = webdriver.Firefox(options=opt)
+    srv = Service('/usr/local/bin/geckodriver') # just werks
+    driver = webdriver.Firefox(options = opt, service = srv)
     driver.get(url)
 
     # get page  
