@@ -87,7 +87,7 @@ def rewrite_email(original_email: str):
                 {"role": "user", "parts": [{"text": prompt}]}
             ],
             generation_config={
-                "temperature": 0.7,
+                "temperature": 0.8,
                 "max_output_tokens": 1000        
             }
         )
