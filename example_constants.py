@@ -13,4 +13,5 @@ PHONE = "+1 234567890"
 MESSAGE_FIRST_HALF = "Dear sir/madam, I would like to express my interest for your property at "
 MESSAGE_SECOND_HALF = ". Please let me know if there is an opportunity for a sighting. Kind regards, "
 MINIMUM_SIZE = 20
+MAXIMUM_PRICE = 1400
 LLM_API_KEY = "123456789"

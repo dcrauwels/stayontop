@@ -5,7 +5,7 @@ import strutils
 
 def main() -> None:
     # step 1: parse email for location
-    location, subject, message_id, references = emailutils.email_checker()
+    location, subject, message_id, references, original_message, original_sender, original_date = emailutils.email_checker()
     if location == "": # means email_checker() returned an empty string, which means we found a relevant email but did not manage to extract a location. Worrying.
         emailutils.send_email(constants.EMAIL, "WARNING: Stayontop cannot find location", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} but no location seems to be present. Please check the email manually ASAP.")
         return None
@@ -32,11 +32,13 @@ def main() -> None:
         print("- result: email found and url found but no price/size found")
         return None
     if size <= constants.MINIMUM_SIZE:
-        emailutils.send_email(constants.EMAIL, "WARNING: Stayontop found a small property", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} describing a property at {location}. A corresponding url was found at {url}. The website describes the property as costing € {price} per month for {size} square meters, which is less than 30. The realtor has not been contacted. You can consider the property yourself if you so wish.")
+        emailutils.send_email(constants.EMAIL, "WARNING: Stayontop found a small property", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} describing a property at {location}. A corresponding url was found at {url}. The website describes the property as costing € {price} per month for {size} square meters, which is less than {constants.MINIMUM_SIZE}. The realtor has not been contacted. You can consider the property yourself if you so wish.")
         print("- result: email found and url found and price/size found but size too small")
         return None
+    if price > constants.MAXIMUM_PRICE:
+        emailutils.send_email(constants.EMAIL, "WARNING: Stayontop found an expensive property", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} describing a property at {location}. A corresponding url was found at {url}. The website describes the property as costing € {price} per month for {size} square meters, which is more than € {constants.MAXIMUM_PRICE}. The realtor has not been contacted. You can consider the property yourself if you so wish.")
     
-    print(f"  Property seems to be over {constants.MINIMUM_SIZE} square meters in size - sending email!")
+    print(f"  Property seems to be over {constants.MINIMUM_SIZE} square meters in size and under € {constants.MAXIMUM_PRICE} - sending email!")
 
     # step 4: return email
     name = constants.NAME
@@ -44,7 +46,10 @@ def main() -> None:
     message = constants.MESSAGE_FIRST_HALF + street_name + constants.MESSAGE_SECOND_HALF + name
     reply_subject = "Re: " + subject
     
-    emailutils.send_email(agency_address, reply_subject, message, True, None, in_reply_to = message_id, references = references) #NOTE that this replies to self right now, not to 
+    # reply
+    emailutils.send_email(agency_address, reply_subject, message, True, None, in_reply_to = message_id, references = references, original_message = original_message, original_sender = original_sender, original_date = original_date)
+    # notification
+    emailutils.send_email(constants.EMAIL, f"Stayontop: {location} viewing requested", f"Stayontop has found an email from {constants.AGENCY_ADDRESS} describing a property at {location}. A corresponding url was found at {url}. The website describes the property as consting € {price} per month for {size} square meters, which meets your requirements for a property of at least {constants.MINIMUM_SIZE} square meters at € {constants.MAXIMUM_PRICE} per month. The realtor has been emailed.")
     
     print("- result: email found and url found and reply sent")
     

@@ -13,7 +13,14 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 
-def send_email(to: str, subject: str, body: str, rewrite: bool = None, attachment_path: str = None, **kwargs) -> None:
+def send_email(
+        to: str, 
+        subject: str, 
+        body: str, 
+        rewrite: bool = False, 
+        attachment_path: str = None, 
+        **kwargs
+        ) -> None:
     '''Send an email to email address.
 
     Mandatory arguments:
@@ -24,13 +31,21 @@ def send_email(to: str, subject: str, body: str, rewrite: bool = None, attachmen
     Optional arguments:
         rewrite: bool, optional, describes whether to rewrite the email using OpenAI API as executed with `strutils.rewrite_email()`.
         attachment_path: string, optional, describes the path to an attachment. Mainly I use this to email myself the logs nightly and then delete them from disk.
-        in_reply_to: string, Message-ID of the email being replied to'''
+        in_reply_to: string, Message-ID of the email being replied to. emailutils.email_checker() returns this.
+        references: string, References header of the email being replied to. emailutils.email_checker() returns this.
+        original_message: string, body content of original email.
+        original_sender: string, email address of sender of original email.
+        original_date: string, date of the original email.
+        
+    Returns:
+        None.'''
 
     # construct email
     msg = MIMEMultipart()
     msg["subject"] = subject
     msg["From"] = constants.USERNAME
     msg["To"] = to
+    complete_message = body
     
     # kwargs
     if "in_reply_to" in kwargs:
@@ -41,8 +56,16 @@ def send_email(to: str, subject: str, body: str, rewrite: bool = None, attachmen
             msg["References"] = f"{references} {in_reply_to}"
         else:
             msg["References"] = in_reply_to
+
+        quoted_original = "\n".join([f"> {line}" for line in kwargs["original_message"].split("\n")])
+        complete_message = f"""{body}
+
+On {kwargs["original_date"]}, {kwargs["original_sender"]} wrote:
+{quoted_original}
+"""
+
         
-    msg.attach(MIMEText(body, "plain"))
+    msg.attach(MIMEText(complete_message, "plain"))
 
     # rewrite?
     if rewrite:
@@ -74,7 +97,7 @@ def send_email(to: str, subject: str, body: str, rewrite: bool = None, attachmen
     return None
 
 def email_checker():
-    '''Checks email for new messages matching a specific pattern from a predefined sender. Currently only checks email subjects. Works with gmail.
+    '''Checks email for new messages matching a specific pattern from a predefined sender. Currently only checks email subjects. Works with gmail. Heavily reliant on constants.py file.
 
     Args:
         none
@@ -83,12 +106,18 @@ def email_checker():
         location: a string naming the street name of the property referred to in the email.
         subject: the email subject.
         message-id: the email message-ID. Useful for the send_email() function, in particular the in_reply_to keyword argument.
-        references: the email references. Useful for the send_email() function, in particular the references keyword argument.'''
+        references: the email references. Useful for the send_email() function, in particular the references keyword argument.
+        original_message: the body of the original email. Useful for the send_email() function, in particular the original_message kwarg.
+        original_sender: the sender of the original email. Useful for the send_email() function, in particular the original_sender kwarg.
+        original_date: the date of the matching email, if any. Useful for the send_email() function, in particular the original_date kwarg.'''
     # init
     location = None
     subject = None
     message_id = None
     references = None
+    body = None
+    sender = None
+    date = None
 
 
     # Connect to imap server
@@ -122,9 +151,13 @@ def email_checker():
         if isinstance(subject, bytes):
             subject = subject.decode()
 
+        # sender & date
+        sender = mid.get('From')
+        date = mid.get('Date')
+
         # body
         body = ""
-        if emessage.is_multipart(): #unlikely but just in case
+        if emessage.is_multipart(): 
             for part in emessage.walk():
                 if part.get_content_type() == "text/plain":
                     body = part.get_payload(decode=True).decode()
@@ -157,7 +190,7 @@ def email_checker():
             # get out
             mail.close()
             mail.logout()
-            return "", subject, message_id, references
+            return "", subject, message_id, references, body, sender, date
 
         
     
