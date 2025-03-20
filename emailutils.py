@@ -152,8 +152,8 @@ def email_checker():
             subject = subject.decode()
 
         # sender & date
-        sender = mid.get('From')
-        date = mid.get('Date')
+        sender = emessage.get('From')
+        date = emessage.get('Date')
 
         # body
         body = ""
