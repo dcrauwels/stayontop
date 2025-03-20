@@ -169,14 +169,20 @@ def email_checker():
     return location, subject, message_id, references
 
 def main():
-    '''Send an email with the largest log file.'''
-    # get files in logs folder
+    '''Send an email with the largest log file. Recommend putting this in a nightly cron job at 1 AM.
+    Keep in mind that logfiles are separated automatically by date so if you send it before midnight you will have a spare file containing that day's activity from 
+    the logging point until midnight which a single daily cron job will not solve.'''
+    # init
     largest_path = None
     largest_size = 0
 
-    #simply iterate over files to identify largest file in directory. should not be too taxing
-    for filename in os.listdir("logs"):
-        filepath = os.path.join("logs", filename)
+    # get logs folder
+    script_dir = os.path.dirname(os.path.abspath(__file__)) # logs folder is relative to script location but not to where you're calling python3 if through cron
+    logs_dir = os.path.join(script_dir, "logs")
+
+    #simply iterate over files to identify largest file in directory. very straightforward
+    for filename in os.listdir(logs_dir):
+        filepath = os.path.join(logs_dir, filename)
         if os.path.isfile(filepath):
             file_size = os.path.getsize(filepath)
             if file_size > largest_size:
