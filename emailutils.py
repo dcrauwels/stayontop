@@ -132,7 +132,7 @@ def email_checker():
         error_message = f"IMAP login failed: {e}"
         print(error_message)
         strutils.write_log(False, False, False, None, False, None, False)
-        return location, subject, message_id, references #stop the rest of the script if IMAP fails.
+        return location, subject, message_id, references, body, sender, date #stop the rest of the script if IMAP fails.
 
     # Search for unread emails
     _, messages = mail.search(None, f'(UNSEEN FROM "{constants.AGENCY_ADDRESS}")')
@@ -179,7 +179,7 @@ def email_checker():
             # get out
             mail.close()
             mail.logout()
-            return location, subject, message_id, references
+            return location, subject, message_id, references, body, sender, date
         else:
             # this means we have an email from the correct sender but without a matching subject. we do two things: log this event and send a warning email to self
             no_match_message = "No location found in email"
